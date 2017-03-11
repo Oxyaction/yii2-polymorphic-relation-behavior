@@ -10,7 +10,7 @@ You can create a comment table for each of this entities (`ArticleComment`,
  `PhotoComment`, `PostComment`), but this solution is
 not so good and not DRY at all.
 
-The best solution will be creating the single `Comment` entity and table and
+The best solution will be creating the single `Comment` entity table
 and establishing polymorphic relations. The `comment` table is required to have
 `type` column that will indicate to which entity type comment belongs 
 and `external_id` column that will be used as foreign key column.
@@ -102,7 +102,7 @@ public function behaviors()
 
 ```
 ##### Many to many
-Often we need to establish polymorphic relation with many to many, tags.
+Often we need to establish polymorphic relation with many to many.
 in this case `type` and `external_id` columns will be in junction table.
 ```php
 public function behaviors()
@@ -113,7 +113,7 @@ public function behaviors()
             'polyRelations' => [
                 'relationName' => [
                     'type' => RelatedPolymorphicBehavior::MANY_MANY,
-                    'class' => Tag::className()',
+                    'class' => Tag::className(),
                     'viaTable' => 'taggable_tag',
                 ]
             ],
@@ -132,7 +132,7 @@ public function behaviors()
             'polyRelations' => [
                 'relationName' => [
                     'type' => RelatedPolymorphicBehavior::MANY_MANY,
-                    'class' => Tag::className()',
+                    'class' => Tag::className(),
                     'viaTable' => 'taggable_tag',
                     'pkColumnName' => 'id',
                     'foreignKeyColumnName' => 'external_id',
