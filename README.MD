@@ -62,7 +62,7 @@ $photo->comments;
 
 ##### Has many
 Short:
-```
+```php
 ...
 public function behaviors()
 {
@@ -79,7 +79,7 @@ public function behaviors()
 ...
 ```
 Same as
-```
+```php
 public function behaviors()
 {
     return [
@@ -104,7 +104,7 @@ public function behaviors()
 ##### Many to many
 Often we need to establish polymorphic relation with many to many, tags.
 in this case `type` and `external_id` columns will be in junction table.
-```
+```php
 public function behaviors()
 {
     return [
@@ -123,7 +123,7 @@ public function behaviors()
 }
 ```
 All available options:
-```
+```php
 public function behaviors()
 {
     return [
