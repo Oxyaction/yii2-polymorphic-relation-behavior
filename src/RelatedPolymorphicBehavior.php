@@ -202,7 +202,7 @@ class RelatedPolymorphicBehavior extends Behavior
         /** @var ActiveRecord $owner */
         $owner = $this->owner;
         foreach($this->polyRelations as $options) {
-            if ($options['type'] === self::HAS_MANY) {
+            if ($options['type'] === self::HAS_MANY && $options['deleteRelated']) {
                 $condition = [
                     $options['foreignKeyColumnName'] => $owner->getPrimaryKey(),
                     $options['typeColumnName'] => $options['polymorphicType']
