@@ -5,7 +5,6 @@ namespace oxyaction\behaviors;
 use yii\base\Behavior;
 use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
 /**
@@ -58,9 +57,10 @@ class RelatedPolymorphicBehavior extends Behavior
      *          'viaTable' => 'tableName', // required, junction table name
      *          'pkColumnName' => 'id' // optional, field that will be used for relation from primary model, pk field will be used by default
      *          'foreignKeyColumnName' => 'external_id', // optional, by default `$foreignKeyColumnName` prop will be used
-     *          'otherKeyColumnName' => 'comment_id', // optional, by default singular form of related model class concatanated with `_id` will be used
+     *          'otherKeyColumnName' => 'comment_id', // optional, by default singular form of related model class concatenated with `_id` will be used
      *          'typeColumnName' => 'type', // optional, by default value of `$typeColumnName` prop will be used, column name in junction table
      *          'polymorphicType' => 'user', // optional, type field of polymorphic relation, by default value of `$polymorphicType` prop will be used,
+     *          'relatedPkColumnName' => 'id' // optional, pk of the related model
      *      ]
      * ]
      * ```
@@ -128,11 +128,11 @@ class RelatedPolymorphicBehavior extends Behavior
 
             if ($options['type'] === self::HAS_MANY) {
                 $options['deleteRelated'] = isset($options['deleteRelated']) ?
-                    $options['deleteRelated'] : true;
+                    $options['deleteRelated'] : false;
             } elseif ($options['type'] === self::MANY_MANY) {
                 if (!isset($options['viaTable'])) {
                     throw new \InvalidArgumentException("You should specify junction table name with 
-                    'viaTable option' for '{$relationName}' relation.'");
+                    'viaTable' option for '{$relationName}' relation.");
                 }
                 if (!isset($options['otherKeyColumnName'])) {
                     $ns = explode('\\', $options['class']);
@@ -223,14 +223,16 @@ class RelatedPolymorphicBehavior extends Behavior
         /** @var ActiveRecord $owner */
         $owner = $this->owner;
         $relationOptions = $this->polyRelations[$relationName];
-        $pkColumn = $this->getPkColumnName($relationName);
+        $pkColumn = $this->getPrimaryModelPkColumnName($relationName);
         if ($relationOptions['type'] === self::HAS_MANY) {
             return $owner
                 ->hasMany($relationOptions['class'], [$relationOptions['foreignKeyColumnName'] => $pkColumn])
                 ->andWhere([$relationOptions['typeColumnName'] => $relationOptions['polymorphicType']]);
         } elseif ($relationOptions['type'] === self::MANY_MANY) {
+            $relatedPkColumn = isset($relationOptions['relatedPkColumnName'])
+                ? $relationOptions['relatedPkColumnName'] : $this->getPkColumnName($relationOptions['class']);
             $query = $owner
-                ->hasMany($relationOptions['class'], ['id' => $relationOptions['otherKeyColumnName']])
+                ->hasMany($relationOptions['class'], [$relatedPkColumn => $relationOptions['otherKeyColumnName']])
                 ->viaTable($relationOptions['viaTable'], [$relationOptions['foreignKeyColumnName'] => $pkColumn],
                     function($query) use ($relationOptions) {
                         $query->andWhere([$relationOptions['typeColumnName'] => $relationOptions['polymorphicType']]);
@@ -241,18 +243,33 @@ class RelatedPolymorphicBehavior extends Behavior
         }
     }
 
-    protected function getPkColumnName($relationName)
+    /**
+     * @param $relationName
+     * @return string
+     */
+    protected function getPrimaryModelPkColumnName($relationName)
     {
         $relationOptions = $this->polyRelations[$relationName];
-        $pkColumn = isset($relationOptions['pkColumnName']) ? $relationOptions['pkColumnName'] : null;
-        if (!$pkColumn) {
-            $pkColumn = $this->pkColumnName ?: $this->owner->primaryKey();
+        if (isset($relationOptions['pkColumnName'])) {
+            return $relationOptions['pkColumnName'];
+        } elseif ($this->pkColumnName) {
+            return $this->pkColumnName;
+        } else {
+            return $this->getPkColumnName($this->owner->className());
         }
+    }
 
+    /**
+     * @param $modelClass
+     * @return mixed
+     */
+    protected function getPkColumnName($modelClass)
+    {
+        $pkColumn = $modelClass::primaryKey();
         $pkColumn = (array) $pkColumn;
         if (count($pkColumn) > 1) {
-            throw new \InvalidArgumentException("Behavior doesn't support composite keys
-            . Check relation '{$relationName}' configuration.");
+            throw new \InvalidArgumentException("Behavior doesn't support composite keys.
+             Check relation configuration.");
         }
 
         return reset($pkColumn);
