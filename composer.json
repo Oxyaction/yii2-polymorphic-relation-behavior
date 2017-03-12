@@ -15,7 +15,7 @@
     },
     "require-dev": {
         "yiisoft/yii2": "^2.0.0",
-        "phpunit/phpunit": "^4.8"
+        "phpunit/phpunit": "*"
     },
     "suggest": {
         "yiisoft/yii2": "^2.0.0"
