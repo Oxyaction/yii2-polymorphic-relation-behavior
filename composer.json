@@ -1,12 +1,13 @@
 {
     "name": "oxyaction/yii2-polymorphic-relation-behavior",
     "description": "",
-    "homepage": "https://github.com/voskobovich/yii2-many-to-many-behavior",
+    "homepage": "https://github.com/Oxyaction/yii2-polymorphic-relation-behavior",
+    "keywords": ["yii2", "yii 2", "polymorphic", "relation"],
     "license": "MIT",
     "type": "yii2-extension",
     "authors": [
         {
-            "name": "Alexander Kompaniiets",
+            "name": "Alexander Kompaniets",
             "email": "alexkomp.ua@gmail.com"
         }
     ],
