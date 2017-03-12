@@ -1,6 +1,6 @@
 {
     "name": "oxyaction/yii2-polymorphic-relation-behavior",
-    "description": "",
+    "description": "Establishes polymorphic relations",
     "homepage": "https://github.com/Oxyaction/yii2-polymorphic-relation-behavior",
     "keywords": ["yii2", "yii 2", "polymorphic", "relation", "behavior", "behaviour"],
     "license": "MIT",
