@@ -60,7 +60,7 @@ $photo->comments;
 ```
 ### Options
 
-##### Has many
+#### Has many
 Short:
 ```php
 ...
@@ -83,7 +83,7 @@ Same as
 public function behaviors()
 {
     return [
-        'polymorphic => [
+        'polymorphic' => [
             'class' => RelatedPolymorphicBehavior::className(),
             'polyRelations' => [
                 'comments' => [
@@ -101,17 +101,17 @@ public function behaviors()
 }
 
 ```
-##### Many to many
+#### Many to many
 Often we need to establish polymorphic relation with many to many.
 in this case `type` and `external_id` columns will be in junction table.
 ```php
 public function behaviors()
 {
     return [
-        'polymorphic => [
+        'polymorphic' => [
             'class' => RelatedPolymorphicBehavior::className(),
             'polyRelations' => [
-                'relationName' => [
+                'tags' => [
                     'type' => RelatedPolymorphicBehavior::MANY_MANY,
                     'class' => Tag::className(),
                     'viaTable' => 'taggable_tag',
@@ -127,10 +127,10 @@ All available options:
 public function behaviors()
 {
     return [
-        'polymorphic => [
+        'polymorphic' => [
             'class' => RelatedPolymorphicBehavior::className(),
             'polyRelations' => [
-                'relationName' => [
+                'tags' => [
                     'type' => RelatedPolymorphicBehavior::MANY_MANY,
                     'class' => Tag::className(),
                     'viaTable' => 'taggable_tag',
@@ -166,3 +166,47 @@ while relation option will take precedence.
 | `otherKeyColumnName` | related model's foreign key column name in junction table | | fetched from schema | relation | `MANY MANY`
 | `relatedPkColumnName` | related model's pk column name | | fetched from schema | relation | `MANY MANY`
 
+#### Final example
+
+```php
+class Article extends ActiveRecord {
+    public function behaviors()
+    {
+        return [
+            'polymorphic' => [
+                'class' => RelatedPolymorphicBehavior::className(),
+                'polyRelations' => [
+                    'tags' => [
+                        'type' => RelatedPolymorphicBehavior::MANY_MANY,
+                        'class' => Tag::className(),
+                        'viaTable' => 'taggable_tag',
+                    ],
+                    'images' => [
+                        'type' => RelatedPolymorphicBehavior::HAS_MANY,
+                        'class' => Image::className(),
+                    ],
+                    'comments' => [
+                        'type' => RelatedPolymorphicBehavior::HAS_MANY,
+                        'class' => Comment::className(),
+                    ],
+                ],
+                'polymorphicType' => 'article',
+                'pkColumnName' => 'ID',
+                'foreignKeyColumnName' => 'some_external_id',
+                'typeColumnName' => 'entity_type',
+            ]
+        ]
+    }
+}
+```
+
+This will assume that `taggable_tag`, `image` and `comment` tables 
+have `some_external_id` and `entity_type` columns, for `Article` 
+entity it will be filled with `article` value and `Article` primary key 
+column name is `ID`.
+
+#### Warning
+
+Since `external_id` of the polymorphic target entity links to multiple 
+entities, you can not use foreign key constraints and need to check 
+data consistency on application level.
