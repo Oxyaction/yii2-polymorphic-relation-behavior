@@ -3,6 +3,13 @@ Yii2 RelatedPolymorphic Behavior
 This behavior helps to establish polymorphic behaviors easily.
 Forget about endless dictionary tables in your storage.
 
+---
+[![Build Status](https://travis-ci.org/Oxyaction/yii2-polymorphic-relation-behavior.svg?branch=master)](https://travis-ci.org/Oxyaction/yii2-polymorphic-relation-behavior)
+[![Latest Stable Version](https://poser.pugx.org/oxyaction/yii2-polymorphic-relation-behavior/v/stable)](https://packagist.org/packages/oxyaction/yii2-polymorphic-relation-behavior)
+[![Total Downloads](https://poser.pugx.org/oxyaction/yii2-polymorphic-relation-behavior/downloads)](https://packagist.org/packages/oxyaction/yii2-polymorphic-relation-behavior)
+[![Latest Unstable Version](https://poser.pugx.org/oxyaction/yii2-polymorphic-relation-behavior/v/unstable)](https://packagist.org/packages/oxyaction/yii2-polymorphic-relation-behavior)
+[![License](https://poser.pugx.org/oxyaction/yii2-polymorphic-relation-behavior/license)](https://packagist.org/packages/oxyaction/yii2-polymorphic-relation-behavior)
+
 ### Problem
 Often you have some entity related to multiple entities in your system.
 For example `Comment` entity can belong to both `Article`, `Photo`, `Post` etc.
